@@ -19,7 +19,7 @@
         <logback.version>1.2.3</logback.version>
         <jooq.version>3.12.3</jooq.version>
         <h2.version>1.4.200</h2.version>
-        <hikari.version>3.4.1</hikari.version>
+        <commons.dbcp.version>1.4</commons.dbcp.version>
         <junit.version>5.5.2</junit.version>
         <junit.runner.version>1.5.2</junit.runner.version>
     </properties>
@@ -68,9 +68,9 @@
             <version>${h2.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${hikari.version}</version>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons.dbcp.version}</version>
         </dependency>
 
         <!-- Tests -->

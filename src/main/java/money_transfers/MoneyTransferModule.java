@@ -4,17 +4,38 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class MoneyTransferModule extends AbstractModule {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoneyTransferModule.class);
 
     @Override
     protected void configure() {
         bind(MoneyTransferApplication.class).in(Singleton.class);
+        loadProperties();
+    }
+
+    private void loadProperties() {
+        Properties properties = new Properties();
+        try (InputStream input = new FileInputStream("src/main/resources/db.properties")) {
+            properties.load(input);
+        } catch (IOException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
+        Names.bindProperties(binder(), properties);
     }
 
     @Provides
@@ -25,14 +46,17 @@ public class MoneyTransferModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private DataSource provideDataSource() {
-        HikariConfig hikariConfig = new HikariConfig("src/main/resources/db.properties");
-        return new HikariDataSource(hikariConfig);
-    }
-
-    @Provides
-    @Singleton
-    private SQLDialect provideSQLDialect() {
-        return SQLDialect.H2;
+    private DSLContext provideDslContext(@Named("url") String url,
+                                         @Named("username") String username,
+                                         @Named("password") String password,
+                                         @Named("autoCommit") boolean autoCommit,
+                                         @Named("sqlDialect") String sqlDialect) {
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setDefaultAutoCommit(autoCommit);
+        return DSL.using(dataSource, SQLDialect.valueOf(sqlDialect),
+                new Settings().withExecuteWithOptimisticLocking(true));
     }
 }

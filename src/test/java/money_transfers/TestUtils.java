@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
+import com.google.inject.Module;
 import money_transfers.dto.TransferDto;
+import spark.Spark;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,10 +25,15 @@ public class TestUtils {
     public static final String GET = "GET";
     public static final String POST = "POST";
 
-    static void bootstrapMoneyTransferApplication() {
-        Guice.createInjector(new MoneyTransferModule())
+    static void bootstrapMoneyTransferApplication(Module... modules) {
+        Spark.awaitStop();
+        Guice.createInjector(modules)
                 .getInstance(MoneyTransferApplication.class)
                 .run();
+    }
+
+    static void stopMoneyTransferApplication() {
+        Spark.stop();
     }
 
     static String getResponseSuppressingException(String url, String httpMethod, TransferDto requestBody) {
