@@ -1,11 +1,11 @@
-package money_transfers;
+package moneytransfers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Module;
-import money_transfers.dto.TransferDto;
+import moneytransfers.dto.TransferDto;
 import spark.Spark;
 
 import java.io.BufferedReader;

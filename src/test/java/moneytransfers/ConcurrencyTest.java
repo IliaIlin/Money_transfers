@@ -1,6 +1,6 @@
-package money_transfers;
+package moneytransfers;
 
-import money_transfers.dto.TransferDto;
+import moneytransfers.dto.TransferDto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
 
-import static money_transfers.TestUtils.*;
-import static money_transfers.TestUtils.GET;
+import static moneytransfers.TestUtils.*;
+import static moneytransfers.TestUtils.GET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConcurrencyTest {

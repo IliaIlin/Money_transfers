@@ -1,14 +1,12 @@
-package money_transfers.service;
+package moneytransfers.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import money_transfers.MoneyTransferApplication;
-import money_transfers.dto.TransferDto;
-import money_transfers.exception.TransferExecutionException;
-import money_transfers.repository.AccountRepository;
-import money_transfers.tables.Account;
+import moneytransfers.MoneyTransferApplication;
+import moneytransfers.dto.TransferDto;
+import moneytransfers.exception.TransferExecutionException;
+import moneytransfers.repository.AccountRepository;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +30,8 @@ public class AccountService {
 
     public void executeMoneyTransfer(TransferDto transferDto) {
         LOG.debug("Transfer to be processed: " + transferDto);
-        if (transferDto.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new TransferExecutionException();
-        }
         try {
             dslContext.transaction((config) -> {
-                DSL.using(config).fetch(Account.ACCOUNT);
                 BigDecimal currentSenderBalance = accountRepository.getBalanceByAccountId(transferDto.getFromAccountId(), config);
                 if (currentSenderBalance.compareTo(transferDto.getAmount()) < 0) {
                     throw new TransferExecutionException();

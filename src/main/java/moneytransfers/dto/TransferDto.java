@@ -1,4 +1,4 @@
-package money_transfers.dto;
+package moneytransfers.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -45,7 +45,7 @@ public class TransferDto {
 
     @JsonIgnore
     public boolean isValid() {
-        return fromAccountId != null && toAccountId != null && amount != null;
+        return fromAccountId != null && toAccountId != null && amount != null && amount.compareTo(BigDecimal.ZERO) > 0;
     }
 
     @Override

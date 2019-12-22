@@ -1,12 +1,12 @@
-package money_transfers;
+package moneytransfers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
-import money_transfers.dto.TransferDto;
-import money_transfers.exception.InvalidRequestBodyException;
-import money_transfers.exception.TransferExecutionException;
-import money_transfers.service.AccountService;
+import moneytransfers.dto.TransferDto;
+import moneytransfers.exception.InvalidRequestBodyException;
+import moneytransfers.exception.TransferExecutionException;
+import moneytransfers.service.AccountService;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,6 @@ public class MoneyTransferApplication {
 
     public static final String INTERNAL_SERVER_ERROR_MESSAGE =
             "Internal Server Error. Please check correctness of the request and try once more.";
-    public static final String SUCCESSFUL_TRANSFER_MESSAGE = "Transfer was completed successfully";
     public static final String INVALID_REQUEST_BODY_MESSAGE =
             "Please check correctness of the request body and try again.";
     public static final String TRANSFER_EXECUTION_ERROR_MESSAGE =
@@ -57,7 +56,7 @@ public class MoneyTransferApplication {
                 TransferDto transferDto = getTransferDto(request);
                 accountService.executeMoneyTransfer(transferDto);
                 response.status(HttpStatus.OK_200);
-                return SUCCESSFUL_TRANSFER_MESSAGE;
+                return "";
             } finally {
                 LOG.debug("Finish money transfer");
                 writeLock.unlock();

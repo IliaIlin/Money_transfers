@@ -1,4 +1,4 @@
-package money_transfers;
+package moneytransfers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;

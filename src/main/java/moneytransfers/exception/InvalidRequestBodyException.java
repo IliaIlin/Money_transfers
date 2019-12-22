@@ -1,4 +1,4 @@
-package money_transfers.exception;
+package moneytransfers.exception;
 
 public class InvalidRequestBodyException extends RuntimeException {
 }

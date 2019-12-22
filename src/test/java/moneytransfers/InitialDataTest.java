@@ -1,6 +1,6 @@
-package money_transfers;
+package moneytransfers;
 
-import money_transfers.dto.TransferDto;
+import moneytransfers.dto.TransferDto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static money_transfers.TestUtils.*;
+import static moneytransfers.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InitialDataTest {

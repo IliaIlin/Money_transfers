@@ -1,6 +1,6 @@
-package money_transfers;
+package moneytransfers;
 
-import money_transfers.dto.TransferDto;
+import moneytransfers.dto.TransferDto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static money_transfers.MoneyTransferApplication.*;
-import static money_transfers.TestUtils.*;
+import static moneytransfers.MoneyTransferApplication.*;
+import static moneytransfers.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExceptionsTest {
@@ -64,7 +64,7 @@ public class ExceptionsTest {
 
     @Test
     void transfer_negativeAmountOfMoney_shouldReturnCorrectErrorMessage() throws IOException {
-        assertEquals(TRANSFER_EXECUTION_ERROR_MESSAGE,
+        assertEquals(INVALID_REQUEST_BODY_MESSAGE,
                 getResponse("/transfer", POST,
                         new TransferDto(1L, 4L, new BigDecimal("-100.00"))));
     }

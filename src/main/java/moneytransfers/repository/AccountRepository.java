@@ -1,15 +1,15 @@
-package money_transfers.repository;
+package moneytransfers.repository;
 
 import com.google.inject.Singleton;
-import money_transfers.dto.TransferDto;
+import moneytransfers.dto.TransferDto;
 import org.jooq.Configuration;
 import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static money_transfers.tables.Account.ACCOUNT;
-import static money_transfers.tables.Transfer.TRANSFER;
+import static moneytransfers.tables.Account.ACCOUNT;
+import static moneytransfers.tables.Transfer.TRANSFER;
 
 @Singleton
 public class AccountRepository {
