@@ -38,13 +38,15 @@ public class ExceptionsTest {
     @Test
     void transfer_notExistingAccountId_shouldReturnCorrectErrorMessage() throws IOException {
         assertEquals(TRANSFER_EXECUTION_ERROR_MESSAGE,
-                getResponse("/transfer", POST, new TransferDto(10L, 4L, new BigDecimal("20.00"))));
+                getResponse("/transfer", POST,
+                        new TransferDto(10L, 4L, new BigDecimal("20.00"))));
     }
 
     @Test
     void transfer_notSufficientFunds_shouldReturnCorrectErrorMessage() throws IOException {
         assertEquals(TRANSFER_EXECUTION_ERROR_MESSAGE,
-                getResponse("/transfer", POST, new TransferDto(1L, 4L, new BigDecimal("1000.00"))));
+                getResponse("/transfer", POST,
+                        new TransferDto(1L, 4L, new BigDecimal("1000.00"))));
     }
 
 
@@ -58,6 +60,13 @@ public class ExceptionsTest {
     void transfer_invalidRequestBody_shouldReturnCorrectErrorMessage() throws IOException {
         assertEquals(INVALID_REQUEST_BODY_MESSAGE,
                 getResponse("/transfer", POST, null));
+    }
+
+    @Test
+    void transfer_negativeAmountOfMoney_shouldReturnCorrectErrorMessage() throws IOException {
+        assertEquals(TRANSFER_EXECUTION_ERROR_MESSAGE,
+                getResponse("/transfer", POST,
+                        new TransferDto(1L, 4L, new BigDecimal("-100.00"))));
     }
 
     @AfterAll

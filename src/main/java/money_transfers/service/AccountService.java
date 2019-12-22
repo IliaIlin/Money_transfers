@@ -32,6 +32,9 @@ public class AccountService {
 
     public void executeMoneyTransfer(TransferDto transferDto) {
         LOG.debug("Transfer to be processed: " + transferDto);
+        if (transferDto.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new TransferExecutionException();
+        }
         try {
             dslContext.transaction((config) -> {
                 DSL.using(config).fetch(Account.ACCOUNT);
