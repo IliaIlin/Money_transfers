@@ -25,9 +25,9 @@ public class TestUtils {
     public static final String GET = "GET";
     public static final String POST = "POST";
 
-    static void bootstrapMoneyTransferApplication(Module... modules) {
+    static void bootstrapMoneyTransferApplication() {
         Spark.awaitStop();
-        Guice.createInjector(modules)
+        Guice.createInjector(new MoneyTransferModule())
                 .getInstance(MoneyTransferApplication.class)
                 .run();
     }

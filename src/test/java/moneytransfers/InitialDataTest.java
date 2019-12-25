@@ -17,7 +17,7 @@ public class InitialDataTest {
 
     @BeforeAll
     static void beforeAll() {
-        bootstrapMoneyTransferApplication(new MoneyTransferModule());
+        bootstrapMoneyTransferApplication();
     }
 
     @Test

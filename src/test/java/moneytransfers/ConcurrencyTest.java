@@ -17,7 +17,7 @@ public class ConcurrencyTest {
 
     @BeforeAll
     static void beforeAll() {
-        bootstrapMoneyTransferApplication(new MoneyTransferModule());
+        bootstrapMoneyTransferApplication();
     }
 
     @Test

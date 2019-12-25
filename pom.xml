@@ -7,11 +7,13 @@
     <groupId>money-transfers</groupId>
     <artifactId>money-transfers-java-without-spring</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
+        <maven.assembly.version>3.2.0</maven.assembly.version>
         <spark.version>2.9.1</spark.version>
         <jackson.version>2.10.1</jackson.version>
         <guice.version>4.2.2</guice.version>
@@ -22,6 +24,7 @@
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <junit.version>5.5.2</junit.version>
         <junit.runner.version>1.5.2</junit.runner.version>
+        <mockito.version>3.2.4</mockito.version>
     </properties>
 
     <dependencies>
@@ -92,6 +95,18 @@
             <version>${junit.runner.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -140,6 +155,33 @@
                         <version>${jooq.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.assembly.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>money-transfers-executable</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        moneytransfers.MoneyTransferApplication
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
