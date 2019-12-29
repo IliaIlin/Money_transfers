@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
-import com.google.inject.Module;
 import moneytransfers.dto.TransferDto;
 import spark.Spark;
 
@@ -36,26 +35,47 @@ public class TestUtils {
         Spark.stop();
     }
 
-    static String getResponseSuppressingException(String url, String httpMethod, TransferDto requestBody) {
+    static void assertResponse(int expectedResponseCode, String expectedResponseOutput, Response response) {
+        assertEquals(expectedResponseCode, response.getResponseCode());
+        assertEquals(expectedResponseOutput, response.getResponseOutput());
+    }
+
+    static void assertGetTransfersResponse(int expectedResponseCode, List<TransferDto> expectedTransfers, Response response) throws JsonProcessingException {
+        assertEquals(expectedResponseCode, response.getResponseCode());
+
+        List<TransferDto> transfers = objectMapper.readValue(response.getResponseOutput(), new TypeReference<>() {
+        });
+
+        assertEquals(expectedTransfers.size(), transfers.size());
+
+        for (TransferDto transfer : transfers) {
+            assertTrue(expectedTransfers.contains(transfer));
+        }
+    }
+
+    static void sendRequestSuppressingException(String url, String httpMethod, TransferDto requestBody) {
         try {
-            return getResponse(url, httpMethod, requestBody);
+            sendRequest(url, httpMethod, requestBody);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static String getResponse(String url, String httpMethod, TransferDto requestBody) throws IOException {
+    static Response sendRequest(String url, String httpMethod) throws IOException {
         HttpURLConnection connection = createConnection(url, httpMethod);
-
-        String requestBodyString = objectMapper.writeValueAsString(requestBody);
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(requestBodyString.getBytes());
-        return getResponseByConnection(connection);
+        return sendRequest(connection);
     }
 
-    static String getResponse(String url, String httpMethod) throws IOException {
-        HttpURLConnection connection = createConnection(url, httpMethod);
-        return getResponseByConnection(connection);
+    static Response sendRequest(String url, String httpMethod, TransferDto requestBody) throws IOException {
+        HttpURLConnection connection = createConnection(url, httpMethod, requestBody);
+        return sendRequest(connection);
+    }
+
+    private static Response sendRequest(HttpURLConnection connection) throws IOException {
+        String responseOutput = getResponseOutput(connection);
+        Response response = new Response(responseOutput, connection.getResponseCode());
+        connection.disconnect();
+        return response;
     }
 
     private static HttpURLConnection createConnection(String url, String httpMethod) throws IOException {
@@ -64,36 +84,56 @@ public class TestUtils {
         return connection;
     }
 
-    private static String getResponseByConnection(HttpURLConnection connection) throws IOException {
-        StringBuffer response;
+    private static HttpURLConnection createConnection(String url, String httpMethod, TransferDto requestBody) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(BASE_URL + url).openConnection();
+        connection.setRequestMethod(httpMethod);
+        if (requestBody != null) {
+            String requestBodyString = objectMapper.writeValueAsString(requestBody);
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(requestBodyString.getBytes());
+        }
+        return connection;
+    }
+
+    private static String getResponseOutput(HttpURLConnection connection) throws IOException {
+        StringBuffer responseOutput;
+        InputStream inputStream = getInputStream(connection);
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(inputStream))) {
+            String inputLine;
+            responseOutput = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                responseOutput.append(inputLine);
+            }
+        }
+        return responseOutput.toString();
+    }
+
+    private static InputStream getInputStream(HttpURLConnection connection) throws IOException {
         InputStream inputStream;
         if (connection.getResponseCode() > 299) {
             inputStream = connection.getErrorStream();
         } else {
             inputStream = connection.getInputStream();
         }
-        try (BufferedReader in = new BufferedReader(
-                new InputStreamReader(inputStream))) {
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-        }
+        return inputStream;
+    }
+}
 
-        connection.disconnect();
-        return response.toString();
+class Response {
+    private final String responseOutput;
+    private final int responseCode;
+
+    Response(String responseOutput, int responseCode) {
+        this.responseOutput = responseOutput;
+        this.responseCode = responseCode;
     }
 
-    static void assertTransfersResponse(List<TransferDto> expectedTransfers, String response) throws JsonProcessingException {
-        List<TransferDto> transfers = objectMapper.readValue(
-                response, new TypeReference<>() {
-                });
+    public String getResponseOutput() {
+        return responseOutput;
+    }
 
-        assertEquals(expectedTransfers.size(), transfers.size());
-
-        for (TransferDto transfer : transfers) {
-            assertTrue(expectedTransfers.contains(transfer));
-        }
+    public int getResponseCode() {
+        return responseCode;
     }
 }
