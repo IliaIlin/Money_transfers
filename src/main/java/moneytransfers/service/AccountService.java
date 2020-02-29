@@ -49,10 +49,10 @@ public class AccountService {
     }
 
     public BigDecimal getBalanceByAccountId(Long accountId) {
-        return dslContext.transactionResult((config) -> accountRepository.getBalanceByAccountId(accountId, config));
+        return accountRepository.getBalanceByAccountId(accountId, dslContext.configuration());
     }
 
     public List<TransferDto> getTransfersByAccountId(Long accountId) {
-        return dslContext.transactionResult((config) -> accountRepository.getTransfersByAccountId(accountId, config));
+        return accountRepository.getTransfersByAccountId(accountId, dslContext.configuration());
     }
 }
