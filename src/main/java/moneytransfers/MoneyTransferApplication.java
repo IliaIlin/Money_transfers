@@ -2,7 +2,6 @@ package moneytransfers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import moneytransfers.dto.TransferDto;
 import moneytransfers.exception.InvalidRequestBodyException;
 import moneytransfers.exception.TransferExecutionException;
@@ -12,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 

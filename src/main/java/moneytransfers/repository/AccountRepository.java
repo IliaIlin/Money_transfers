@@ -1,10 +1,10 @@
 package moneytransfers.repository;
 
-import com.google.inject.Singleton;
 import moneytransfers.dto.TransferDto;
 import org.jooq.Configuration;
 import org.jooq.impl.DSL;
 
+import javax.inject.Singleton;
 import java.math.BigDecimal;
 import java.util.List;
 
