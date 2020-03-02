@@ -10,9 +10,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
 
-import static moneytransfers.TestUtils.*;
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.with;
+import static moneytransfers.TestUtils.bootstrapMoneyTransferApplication;
+import static moneytransfers.TestUtils.stopMoneyTransferApplication;
+import static org.hamcrest.Matchers.equalTo;
 
 public class ConcurrencyTest {
+    private CountDownLatch countDownLatch;
 
     @BeforeAll
     static void beforeAll() {
@@ -21,39 +26,44 @@ public class ConcurrencyTest {
 
     @Test
     void transfer_5simultaneousRequests_resultShouldBePredictable() throws InterruptedException, IOException {
-        CountDownLatch countDownLatch = new CountDownLatch(5);
+        countDownLatch = new CountDownLatch(5);
 
-        new Thread(() -> {
-            sendRequestSuppressingException("/transfer", POST, new TransferDto(4L, 1L, new BigDecimal("50.00")));
-            countDownLatch.countDown();
-        }).start();
-
-        new Thread(() -> {
-            sendRequestSuppressingException("/transfer", POST, new TransferDto(2L, 3L, new BigDecimal("40.00")));
-            countDownLatch.countDown();
-        }).start();
-
-        new Thread(() -> {
-            sendRequestSuppressingException("/transfer", POST, new TransferDto(1L, 4L, new BigDecimal("10.00")));
-            countDownLatch.countDown();
-        }).start();
-
-        new Thread(() -> {
-            sendRequestSuppressingException("/transfer", POST, new TransferDto(3L, 2L, new BigDecimal("10.00")));
-            countDownLatch.countDown();
-        }).start();
-
-        new Thread(() -> {
-            sendRequestSuppressingException("/transfer", POST, new TransferDto(3L, 2L, new BigDecimal("10.00")));
-            countDownLatch.countDown();
-        }).start();
+        executeTransferInNewThread(new TransferDto(4L, 1L, new BigDecimal("50.00")));
+        executeTransferInNewThread(new TransferDto(2L, 3L, new BigDecimal("40.00")));
+        executeTransferInNewThread(new TransferDto(1L, 4L, new BigDecimal("10.00")));
+        executeTransferInNewThread(new TransferDto(3L, 2L, new BigDecimal("10.00")));
+        executeTransferInNewThread(new TransferDto(3L, 2L, new BigDecimal("10.00")));
 
         countDownLatch.await();
 
-        assertResponse(HttpStatus.OK_200, "390.00", sendRequest("/accounts/1/balance", GET));
-        assertResponse(HttpStatus.OK_200, "230.00", sendRequest("/accounts/2/balance", GET));
-        assertResponse(HttpStatus.OK_200, "520.00", sendRequest("/accounts/3/balance", GET));
-        assertResponse(HttpStatus.OK_200, "960.00", sendRequest("/accounts/4/balance", GET));
+        get("/accounts/1/balance")
+                .then()
+                .statusCode(HttpStatus.OK_200)
+                .body(equalTo("390.00"));
+
+        get("/accounts/2/balance")
+                .then()
+                .statusCode(HttpStatus.OK_200)
+                .body(equalTo("230.00"));
+
+        get("/accounts/3/balance")
+                .then()
+                .statusCode(HttpStatus.OK_200)
+                .body(equalTo("520.00"));
+
+        get("/accounts/4/balance")
+                .then()
+                .statusCode(HttpStatus.OK_200)
+                .body(equalTo("960.00"));
+    }
+
+    private void executeTransferInNewThread(TransferDto transferData) {
+        new Thread(() -> {
+            with()
+                    .body(transferData)
+                    .post("/transfer");
+            countDownLatch.countDown();
+        }).start();
     }
 
     @AfterAll
