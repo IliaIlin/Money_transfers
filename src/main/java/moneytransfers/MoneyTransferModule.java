@@ -24,11 +24,10 @@ public class MoneyTransferModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(MoneyTransferApplication.class).in(Singleton.class);
-        loadProperties();
+        loadDbProperties();
     }
 
-    private void loadProperties() {
+    private void loadDbProperties() {
         Properties properties = new Properties();
         try (InputStream input = new FileInputStream("src/main/resources/db.properties")) {
             properties.load(input);

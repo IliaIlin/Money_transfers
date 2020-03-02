@@ -12,11 +12,13 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static spark.Spark.*;
 
+@Singleton
 public class MoneyTransferApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(MoneyTransferApplication.class);
