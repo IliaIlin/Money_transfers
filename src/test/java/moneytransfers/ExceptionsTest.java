@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static moneytransfers.MoneyTransferApplication.*;
 import static moneytransfers.TestUtils.*;
+import static moneytransfers.controller.MoneyTransferController.*;
 
 public class ExceptionsTest {
 

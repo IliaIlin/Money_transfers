@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import moneytransfers.controller.MoneyTransferController;
 import moneytransfers.dto.TransferDto;
 import spark.Spark;
 
@@ -19,15 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestUtils {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper;
     private static final String BASE_URL = "http://localhost:4567";
     public static final String GET = "GET";
     public static final String POST = "POST";
 
     static void bootstrapMoneyTransferApplication() {
         Spark.awaitStop();
-        Guice.createInjector(new MoneyTransferModule())
-                .getInstance(MoneyTransferApplication.class)
+        Injector injector = Guice.createInjector(new MoneyTransferModule());
+        objectMapper = injector.getInstance(ObjectMapper.class);
+        injector.getInstance(MoneyTransferController.class)
                 .run();
     }
 
