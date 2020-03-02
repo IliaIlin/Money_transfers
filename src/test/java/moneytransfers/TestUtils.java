@@ -18,13 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestUtils {
 
     static void bootstrapMoneyTransferApplication() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 4567;
-        RestAssured.defaultParser = Parser.JSON;
         Spark.awaitStop();
         Guice.createInjector(new MoneyTransferModule())
                 .getInstance(MoneyTransferController.class)
                 .run();
+        Spark.awaitInitialization();
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = Spark.port();
+        RestAssured.defaultParser = Parser.JSON;
     }
 
     static void stopMoneyTransferApplication() {
