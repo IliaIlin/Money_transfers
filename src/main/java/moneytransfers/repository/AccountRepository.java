@@ -2,11 +2,13 @@ package moneytransfers.repository;
 
 import moneytransfers.dto.TransferDto;
 import org.jooq.Configuration;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import javax.inject.Singleton;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static moneytransfers.tables.Account.ACCOUNT;
 import static moneytransfers.tables.Transfer.TRANSFER;
@@ -27,12 +29,15 @@ public class AccountRepository {
                 .where(ACCOUNT.ID.eq(accountId)).execute();
     }
 
-    public BigDecimal getBalanceByAccountId(Long accountId, Configuration config) {
-        return DSL.using(config).select(ACCOUNT.BALANCE)
+    public Optional<BigDecimal> getBalanceByAccountId(Long accountId, Configuration config) {
+        Record1<BigDecimal> record = DSL.using(config).select(ACCOUNT.BALANCE)
                 .from(ACCOUNT)
                 .where(ACCOUNT.ID.eq(accountId))
-                .fetchOne()
-                .into(BigDecimal.class);
+                .fetchOne();
+        if (record == null) {
+            return Optional.empty();
+        }
+        return Optional.of(record.into(BigDecimal.class));
     }
 
     public List<TransferDto> getTransfersByAccountId(Long accountId, Configuration config) {

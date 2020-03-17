@@ -16,12 +16,12 @@ import static moneytransfers.TestUtils.bootstrapMoneyTransferApplication;
 import static moneytransfers.TestUtils.stopMoneyTransferApplication;
 import static org.hamcrest.Matchers.equalTo;
 
-public class ConcurrencyTest {
+public class MoneyTransferE2ETest {
     private CountDownLatch countDownLatch;
 
     @BeforeAll
     static void beforeAll() {
-        bootstrapMoneyTransferApplication();
+        bootstrapMoneyTransferApplication(() -> MoneyTransferApplication.main(new String[]{}));
     }
 
     @Test

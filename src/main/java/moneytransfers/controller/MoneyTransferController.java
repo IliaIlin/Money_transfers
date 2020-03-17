@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import moneytransfers.MoneyTransferApplication;
 import moneytransfers.dto.TransferDto;
 import moneytransfers.exception.InvalidRequestBodyException;
+import moneytransfers.exception.NoSuchAccountException;
 import moneytransfers.exception.TransferExecutionException;
 import moneytransfers.service.AccountService;
 import org.eclipse.jetty.http.HttpStatus;
@@ -30,10 +31,12 @@ public class MoneyTransferController {
 
     public static final String INTERNAL_SERVER_ERROR_MESSAGE =
             "Internal Server Error. Please check correctness of the request and try once more.";
-    public static final String INVALID_REQUEST_BODY_MESSAGE =
-            "Please check correctness of the request body and try again.";
+    public static final String INVALID_REQUEST_MESSAGE =
+            "Please check correctness of the request and try again.";
     public static final String TRANSFER_EXECUTION_ERROR_MESSAGE =
             "Requested money transfer was rejected. Please check whether sender account has sufficient funds and correctness of the request body.";
+    public static final String NO_ACCOUNT_FOUND_ERROR_MESSAGE =
+            "Specified account doesn't exist. Please check correctness of the request and try once more.";
 
     @Inject
     public MoneyTransferController(AccountService accountService, ObjectMapper objectMapper) {
@@ -80,14 +83,24 @@ public class MoneyTransferController {
             }
         });
 
+        exception(NoSuchAccountException.class, (exception, request, response) -> {
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            response.body(NO_ACCOUNT_FOUND_ERROR_MESSAGE);
+        });
+
         exception(InvalidRequestBodyException.class, (exception, request, response) -> {
             response.status(HttpStatus.BAD_REQUEST_400);
-            response.body(INVALID_REQUEST_BODY_MESSAGE);
+            response.body(INVALID_REQUEST_MESSAGE);
         });
 
         exception(TransferExecutionException.class, (exception, request, response) -> {
-            response.status(HttpStatus.BAD_REQUEST_400);
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             response.body(TRANSFER_EXECUTION_ERROR_MESSAGE);
+        });
+
+        exception(NumberFormatException.class, (exception, request, response) -> {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            response.body(INVALID_REQUEST_MESSAGE);
         });
 
         exception(Exception.class, (exception, request, response) -> {
