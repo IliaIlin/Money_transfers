@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AccountServiceIntegrationTest {
-    private static AccountService accountService;
+    private AccountService accountService;
 
     @BeforeEach
     void setUp() {

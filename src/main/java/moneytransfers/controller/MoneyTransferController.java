@@ -67,6 +67,7 @@ public class MoneyTransferController {
             readLock.lock();
             try {
                 List<TransferDto> transfersByAccountId = accountService.getTransfersByAccountId(Long.valueOf(request.params(":id")));
+                response.type("application/json");
                 return objectMapper.writeValueAsString(transfersByAccountId);
             } finally {
                 readLock.unlock();

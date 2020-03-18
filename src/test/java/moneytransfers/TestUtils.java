@@ -22,7 +22,6 @@ public class TestUtils {
     private static void setupRestAssured() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = Spark.port();
-        RestAssured.defaultParser = Parser.JSON;
     }
 
     public static void stopMoneyTransferApplication() {

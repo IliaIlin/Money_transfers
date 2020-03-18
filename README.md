@@ -4,7 +4,7 @@ Standalone RESTful application for money transfers between accounts. It is writt
 
 To create the executable jar run:
 
-`mvn clean install -DskipTests`
+`mvn clean package -DskipTests`
 
 After that run jar file:
 
